@@ -12,17 +12,14 @@ export class HeaderComponent {
   notifications: number = 3;
 
   toggleNotifications(): void {
-    // Lógica para mostrar panel de notificaciones
     console.log('Abriendo panel de notificaciones');
   }
 
   toggleUserMenu(): void {
-    // Lógica para mostrar menú de usuario
     console.log('Abriendo menú de usuario');
   }
 
   logout(): void {
-    // Lógica para cerrar sesión
     console.log('Cerrando sesión');
   }
 }

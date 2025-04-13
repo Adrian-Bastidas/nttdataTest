@@ -1,0 +1,14 @@
+<div class="list-component">
+  <div class="search-products">
+    <div class="search-header">
+      <app-search></app-search>
+      <button class="add-button" (click)="goToAddProduct()">Agregar</button>
+    </div>
+  </div>
+  <div class="product-list-container">
+    <app-table-constructor
+      [columns]="columns"
+      [data]="rows"
+    ></app-table-constructor>
+  </div>
+</div>
