@@ -4,7 +4,7 @@
     [(ngModel)]="searchTerm"
     [placeholder]="placeholder"
     [attr.aria-label]="ariaLabel"
-    (input)="onSearch()"
+    (ngModelChange)="onSearch($event)"
     class="search-input"
   />
 </div>

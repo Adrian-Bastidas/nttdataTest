@@ -13,12 +13,23 @@ import { Router } from '@angular/router';
 })
 export class ProductListComponent implements OnInit {
   constructor(private productService: ProductService, private router: Router) {}
+  searchTerm: string = '';
+  filteredRows: any[] = [];
 
   ngOnInit(): void {
+    this.filteredRows = [...this.rows];
     // this.cargarProductos();
   }
+
+  searchChange(term: string) {
+    const lowerCaseTerm = term.toLowerCase();
+    this.filteredRows = this.rows.filter((product) =>
+      product.name.toLowerCase().includes(lowerCaseTerm)
+    );
+  }
+
   goToAddProduct() {
-    this.router.navigate(['/add']); // Cambia la ruta a la deseada
+    this.router.navigate(['/add']);
   }
 
   // productos: Product[] = [];
@@ -52,7 +63,23 @@ export class ProductListComponent implements OnInit {
   rows = [
     {
       id: 'uno',
-      name: 'Nombre producto',
+      name: 'Nombre producto 1',
+      description: 'Descripción producto',
+      logo: 'assets-1.png',
+      date_release: '2025-01-01',
+      date_revision: '2025-01-01',
+    },
+    {
+      id: 'dos',
+      name: 'no se que poner',
+      description: 'Descripción producto',
+      logo: 'assets-1.png',
+      date_release: '2025-01-01',
+      date_revision: '2025-01-01',
+    },
+    {
+      id: 'tres',
+      name: 'lorem ipsum',
       description: 'Descripción producto',
       logo: 'assets-1.png',
       date_release: '2025-01-01',

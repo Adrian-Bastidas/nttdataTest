@@ -13,7 +13,7 @@ export class TableConstructorComponent {
   @Input() columns: { key: string; label: string; tooltip?: string }[] = [];
   @Input() data: any[] = [];
   selectedResults: number = 5;
-  resultOptions = [5, 10, 20, 50];
+  resultOptions = [5, 10, 20];
 
   openMenuIndex: number | null = null;
 
@@ -30,19 +30,16 @@ export class TableConstructorComponent {
   }
 
   closeMenu() {
-    console.log('Hola');
     this.openMenuIndex = null;
   }
 
   editItem(row: any) {
     console.log('Editar', row);
     this.closeMenu();
-    // Navega a la ruta o abre modal, etc.
   }
 
   deleteItem(row: any) {
     console.log('Eliminar', row);
     this.closeMenu();
-    // Muestra confirmación, etc.
   }
 }
