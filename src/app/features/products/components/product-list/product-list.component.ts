@@ -87,7 +87,6 @@ export class ProductListComponent implements OnInit {
   }
 
   deleteProduct(productId: any): void {
-    // Handle product deletion logic here
     this.showDeleteModal = false;
     this.selectedProduct = null;
   }
