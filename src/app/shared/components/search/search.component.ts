@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { debounceTime, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-search',
@@ -8,13 +9,20 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './search.component.css',
 })
 export class SearchComponent {
+  private searchSubject = new Subject<string>();
+  constructor() {
+    this.searchSubject.pipe(debounceTime(300)).subscribe((value) => {
+      this.searchChange.emit(value);
+    });
+  }
+
+  searchTerm: string = '';
+
   @Input() placeholder: string = 'Buscar...';
   @Input() ariaLabel: string = 'Buscar';
   @Output() searchChange = new EventEmitter<string>();
 
-  searchTerm: string = '';
-
-  onSearch(): void {
-    this.searchChange.emit(this.searchTerm);
+  onSearch(value: string) {
+    this.searchSubject.next(value);
   }
 }

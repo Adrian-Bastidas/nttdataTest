@@ -1,14 +1,17 @@
 <div class="list-component">
   <div class="search-products">
     <div class="search-header">
-      <app-search></app-search>
+      <app-search (searchChange)="searchChange($event)"></app-search>
       <button class="add-button" (click)="goToAddProduct()">Agregar</button>
     </div>
   </div>
   <div class="product-list-container">
     <app-table-constructor
       [columns]="columns"
-      [data]="rows"
+      [data]="filteredRows"
+      [deleteFunction]="openDeleteModal"
     ></app-table-constructor>
   </div>
 </div>
+
+<app-delete-product> </app-delete-product>
