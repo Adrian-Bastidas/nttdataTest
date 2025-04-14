@@ -27,6 +27,7 @@ export class CreateProductComponent implements OnInit {
   mostrarPopup: boolean = false;
   message: string = '';
   typeModal: string = 'error';
+  isEdit: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -70,24 +71,25 @@ export class CreateProductComponent implements OnInit {
     if (producto) {
       this.formulario.patchValue(producto);
       this.formulario.get('id')?.disable();
+      this.isEdit = true;
     }
 
     this.productoService.clearProducto();
     this.formulario
       .get('date_release')
       ?.valueChanges.subscribe((valor: string) => {
-        const [dia, mes, anio] = valor.split('/').map(Number);
+        const [anio, mes, dia] = valor.split('-').map(Number); // <-- Cambiado el orden
 
-        if ([dia, mes, anio].some(isNaN)) return;
+        if ([anio, mes, dia].some(isNaN)) return;
 
         const fecha = new Date(anio, mes - 1, dia);
-        fecha.setFullYear(fecha.getFullYear() + 1);
+        fecha.setFullYear(fecha.getFullYear() + 1); // Agrega 1 año
 
         const diaRev = fecha.getDate().toString().padStart(2, '0');
         const mesRev = (fecha.getMonth() + 1).toString().padStart(2, '0');
         const anioRev = fecha.getFullYear();
 
-        const date_revision = `${diaRev}/${mesRev}/${anioRev}`;
+        const date_revision = `${anioRev}-${mesRev}-${diaRev}`; // Mantiene el mismo formato
 
         this.formulario
           .get('date_revision')
@@ -105,22 +107,45 @@ export class CreateProductComponent implements OnInit {
       date_revision: { value: '', disabled: true },
     });
   }
-  enviar() {
+  async enviar() {
     if (this.formulario.valid) {
       const fechaString = this.formulario.get('date_release')?.value;
       if (fechaString) {
-        const [day, month, year] = fechaString.split('/').map(Number);
+        const [year, month, day] = fechaString.split('-').map(Number);
 
         if (day && month && year) {
           const fechaIngresada = new Date(year, month - 1, day);
           const fechaActual = new Date();
 
-          // Limpiamos la hora de la fecha actual para comparar solo fechas
           fechaActual.setHours(0, 0, 0, 0);
           fechaIngresada.setHours(0, 0, 0, 0);
 
           if (fechaIngresada >= fechaActual) {
-            this.reiniciar();
+            if (this.isEdit) {
+              const formularioValues = this.formulario.value;
+              formularioValues.date_revision =
+                this.formulario.get('date_revision')?.value;
+              await this.productService.editProduct(
+                this.formulario.get('id')?.value,
+                formularioValues
+              );
+              this.reiniciar();
+            } else {
+              const validate = await this.productService.validateId(
+                this.formulario.get('id')?.value
+              );
+              if (!validate) {
+                const formularioValues = this.formulario.value;
+                formularioValues.date_revision =
+                  this.formulario.get('date_revision')?.value;
+                await this.productService.createProducts(formularioValues);
+                this.reiniciar();
+              } else {
+                this.typeModal = 'error';
+                this.message = 'El ID ya existe, por favor ingrese otro';
+                this.abrirPopup();
+              }
+            }
           } else {
             this.typeModal = 'error';
             this.message =
@@ -137,42 +162,40 @@ export class CreateProductComponent implements OnInit {
     const input = event.target as HTMLInputElement;
     let rawValue = input.value.replace(/\D/g, '');
 
-    let day = '';
-    let month = '';
     let year = '';
-
-    if (rawValue.length >= 2) {
-      day = rawValue.substring(0, 2);
-      const dayNum = Math.min(parseInt(day, 10), 31);
-      day = dayNum.toString().padStart(2, '0');
-    } else {
-      day = rawValue;
-    }
+    let month = '';
+    let day = '';
 
     if (rawValue.length >= 4) {
-      month = rawValue.substring(2, 4);
+      year = rawValue.substring(0, 4);
+    } else {
+      year = rawValue;
+    }
+
+    if (rawValue.length >= 6) {
+      month = rawValue.substring(4, 6);
       let monthNum = parseInt(month, 10);
       if (monthNum > 12) monthNum = 12;
       if (monthNum < 1) monthNum = 1;
       month = monthNum.toString().padStart(2, '0');
-    } else if (rawValue.length > 2) {
-      month = rawValue.substring(2);
+    } else if (rawValue.length > 4) {
+      month = rawValue.substring(4);
     }
 
-    if (rawValue.length > 4) {
-      year = rawValue.substring(4, 8);
+    if (rawValue.length > 6) {
+      day = rawValue.substring(6, 8);
     }
 
-    if (day && month && year.length === 4) {
+    if (year.length === 4 && month && day) {
       const maxDay = new Date(+year, +month, 0).getDate();
       if (parseInt(day) > maxDay) {
         day = maxDay.toString().padStart(2, '0');
       }
     }
 
-    let formattedValue = day;
-    if (month) formattedValue += '/' + month;
-    if (year) formattedValue += '/' + year;
+    let formattedValue = year;
+    if (month) formattedValue += '-' + month;
+    if (day) formattedValue += '-' + day;
 
     input.value = formattedValue;
     this.formulario

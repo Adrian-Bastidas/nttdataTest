@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { TableConstructorComponent } from '../../../../shared/components/table-constructor/table-constructor.component';
 import { SearchComponent } from '../../../../shared/components/search/search.component';
 import {
@@ -8,6 +8,9 @@ import {
 import { Product } from '../../../../core/interfaces/product';
 import { Router } from '@angular/router';
 import { DeleteProductComponent } from '../delete-product/delete-product.component';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import axios from 'axios';
+import { LoaderService } from 'src/app/core/services/loader.service';
 
 @Component({
   selector: 'app-product-list',
@@ -19,16 +22,18 @@ export class ProductListComponent implements OnInit {
   constructor(
     private productService: ProductService,
     private router: Router,
-    private productoService: ProductoInternalService
+    private productoService: ProductoInternalService,
+    private Loader: LoaderService
   ) {}
   searchTerm: string = '';
   filteredRows: any[] = [];
   showDeleteModal: boolean = false;
   selectedProduct: any = null;
+  rows: Product[] = [];
 
   ngOnInit(): void {
     this.filteredRows = [...this.rows];
-    // this.cargarProductos();
+    this.cargarProductos();
   }
 
   searchChange(term: string) {
@@ -42,14 +47,14 @@ export class ProductListComponent implements OnInit {
     this.router.navigate(['/add']);
   }
 
-  // productos: Product[] = [];
-  // async cargarProductos() {
-  //   try {
-  //     this.productos = await this.productService.getProducts();
-  //   } catch (error) {
-  //     console.error('Error cargando productos', error);
-  //   }
-  // }
+  productos: Product[] = [];
+  async cargarProductos(): Promise<void> {
+    this.Loader.show();
+    const productos = await this.productService.loadProducts();
+    this.rows = [...productos];
+    this.filteredRows = [...productos];
+    this.Loader.hide();
+  }
   columns = [
     { key: 'logo', label: 'Logo' },
     { key: 'name', label: 'Nombre del producto' },
@@ -67,33 +72,6 @@ export class ProductListComponent implements OnInit {
       key: 'date_revision',
       label: 'Fecha de reestructuración',
       tooltip: 'Fecha de modificación',
-    },
-  ];
-
-  rows = [
-    {
-      id: 'uno',
-      name: 'Nombre producto 1',
-      description: 'Descripción producto',
-      logo: 'assets-1.png',
-      date_release: '2025-01-01',
-      date_revision: '2025-01-01',
-    },
-    {
-      id: 'dos',
-      name: 'no se que poner',
-      description: 'Descripción producto',
-      logo: 'assets-1.png',
-      date_release: '2025-01-01',
-      date_revision: '2025-01-01',
-    },
-    {
-      id: 'tres',
-      name: 'lorem ipsum',
-      description: 'Descripción producto',
-      logo: 'assets-1.png',
-      date_release: '2025-01-01',
-      date_revision: '2025-01-01',
     },
   ];
 

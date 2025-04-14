@@ -8,7 +8,10 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { Product } from 'src/app/core/interfaces/product';
-import { ProductoInternalService } from 'src/app/core/services/products.service';
+import {
+  ProductoInternalService,
+  ProductService,
+} from 'src/app/core/services/products.service';
 
 @Component({
   selector: 'app-delete-product',
@@ -18,15 +21,27 @@ import { ProductoInternalService } from 'src/app/core/services/products.service'
 })
 export class DeleteProductComponent implements OnInit {
   productoAEliminar: Product | null = null;
+  @Output() productoEliminado = new EventEmitter<void>();
 
-  constructor(private productoService: ProductoInternalService) {}
+  constructor(
+    private productoService: ProductoInternalService,
+    private productService: ProductService
+  ) {}
   ngOnInit(): void {
     this.productoService.getProductoObservable().subscribe((producto) => {
       this.productoAEliminar = producto;
     });
   }
-  onConfirm(): void {
-    if (this.productoAEliminar) this.productoService.clearDelProducto();
+  async onConfirm(): Promise<void> {
+    if (this.productoAEliminar) {
+      const response = await this.productService.deleteProduct(
+        this.productoAEliminar.id
+      );
+      if (response) {
+        this.productoService.clearDelProducto();
+        this.productoEliminado.emit();
+      }
+    }
   }
 
   onCancel(): void {
