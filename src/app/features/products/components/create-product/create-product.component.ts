@@ -108,6 +108,7 @@ export class CreateProductComponent implements OnInit {
     });
   }
   async enviar() {
+    event?.preventDefault();
     if (this.formulario.valid) {
       const fechaString = this.formulario.get('date_release')?.value;
       if (fechaString) {
