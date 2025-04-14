@@ -1,5 +1,28 @@
 <div class="table-container">
-  <table>
+  <div *ngIf="isLoading" class="skeleton-loader">
+    <table>
+      <thead>
+        <tr>
+          <th *ngFor="let col of columns">
+            <div class="skeleton skeleton-text"></div>
+          </th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of [1, 2, 3, 4, 5]">
+          <td *ngFor="let col of columns">
+            <div class="skeleton skeleton-box"></div>
+          </td>
+          <td class="actions-cell">
+            <div class="skeleton skeleton-icon"></div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <table *ngIf="!isLoading">
     <thead>
       <tr>
         <th *ngFor="let col of columns">
@@ -20,8 +43,30 @@
       <tr *ngFor="let row of data | slice : 0 : selectedResults; let i = index">
         <td *ngFor="let col of columns">
           <ng-container *ngIf="col.key === 'logo'; else defaultCell">
-            <div class="logo-circle">{{ row[col.key] }}</div>
+            <div class="logo-circle">
+              <ng-container *ngIf="col.key === 'logo'; else defaultCell">
+                <div class="logo-circle">
+                  <ng-container
+                    *ngIf="!imagenFallida[row.id]; else mostrarIniciales"
+                  >
+                    <img
+                      [src]="row[col.key]"
+                      class="logo-img"
+                      (error)="onImageError(row.id)"
+                    />
+                  </ng-container>
+                  <ng-template #mostrarIniciales>
+                    {{ getInitials(row["nombre"]) || "JG" }}
+                  </ng-template>
+                </div>
+              </ng-container>
+
+              <ng-template #mostrarIniciales>
+                {{ getInitials(row["nombre"]) || "JG" }}
+              </ng-template>
+            </div>
           </ng-container>
+
           <ng-template #defaultCell>
             {{ row[col.key] }}
           </ng-template>
@@ -41,6 +86,16 @@
             <button (click)="deleteItem(row)">
               <i class="fa fa-trash"></i>
             </button>
+          </div>
+        </td>
+      </tr>
+      <tr *ngIf="data.length === 0">
+        <td [attr.colspan]="columns.length" class="no-data-row">
+          <div class="no-data-content">
+            <div class="icon">
+              <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+            </div>
+            <div class="message">No existen registros</div>
           </div>
         </td>
       </tr>
