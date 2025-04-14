@@ -1,13 +1,12 @@
 import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { Component, HostListener, Input } from '@angular/core';
-import { SearchComponent } from '../search/search.component';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ProductoInternalService } from 'src/app/core/services/products.service';
 
 @Component({
   selector: 'app-table-constructor',
-  imports: [CommonModule, SearchComponent, FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './table-constructor.component.html',
   styleUrl: './table-constructor.component.css',
 })

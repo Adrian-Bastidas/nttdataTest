@@ -26,9 +26,7 @@ export class DeleteProductComponent implements OnInit {
     });
   }
   onConfirm(): void {
-    console.log('Eliminar producto con id:', this.productoAEliminar?.id);
-
-    this.productoService.clearDelProducto();
+    if (this.productoAEliminar) this.productoService.clearDelProducto();
   }
 
   onCancel(): void {

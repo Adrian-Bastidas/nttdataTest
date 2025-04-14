@@ -120,7 +120,6 @@ export class CreateProductComponent implements OnInit {
           fechaIngresada.setHours(0, 0, 0, 0);
 
           if (fechaIngresada >= fechaActual) {
-            console.log(this.formulario.getRawValue());
             this.reiniciar();
           } else {
             this.typeModal = 'error';

@@ -98,7 +98,6 @@ export class ProductListComponent implements OnInit {
   ];
 
   openDeleteModal(product: any): void {
-    console.log('Deleting product:', product);
     this.productoService.setDelProducto(product);
 
     this.showDeleteModal = true;
@@ -111,7 +110,6 @@ export class ProductListComponent implements OnInit {
 
   deleteProduct(productId: any): void {
     // Handle product deletion logic here
-    console.log(`Deleting product with ID: ${productId}`);
     this.showDeleteModal = false;
     this.selectedProduct = null;
   }
