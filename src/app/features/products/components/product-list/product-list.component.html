@@ -9,6 +9,9 @@
     <app-table-constructor
       [columns]="columns"
       [data]="filteredRows"
+      [deleteFunction]="openDeleteModal"
     ></app-table-constructor>
   </div>
 </div>
+
+<app-delete-product> </app-delete-product>

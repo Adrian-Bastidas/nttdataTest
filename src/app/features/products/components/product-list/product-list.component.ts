@@ -1,20 +1,30 @@
 import { Component, OnInit } from '@angular/core';
 import { TableConstructorComponent } from '../../../../shared/components/table-constructor/table-constructor.component';
 import { SearchComponent } from '../../../../shared/components/search/search.component';
-import { ProductService } from '../../../../core/services/products.service';
+import {
+  ProductoInternalService,
+  ProductService,
+} from '../../../../core/services/products.service';
 import { Product } from '../../../../core/interfaces/product';
 import { Router } from '@angular/router';
+import { DeleteProductComponent } from '../delete-product/delete-product.component';
 
 @Component({
   selector: 'app-product-list',
-  imports: [TableConstructorComponent, SearchComponent],
+  imports: [TableConstructorComponent, SearchComponent, DeleteProductComponent],
   templateUrl: './product-list.component.html',
   styleUrl: './product-list.component.css',
 })
 export class ProductListComponent implements OnInit {
-  constructor(private productService: ProductService, private router: Router) {}
+  constructor(
+    private productService: ProductService,
+    private router: Router,
+    private productoService: ProductoInternalService
+  ) {}
   searchTerm: string = '';
   filteredRows: any[] = [];
+  showDeleteModal: boolean = false;
+  selectedProduct: any = null;
 
   ngOnInit(): void {
     this.filteredRows = [...this.rows];
@@ -86,4 +96,23 @@ export class ProductListComponent implements OnInit {
       date_revision: '2025-01-01',
     },
   ];
+
+  openDeleteModal(product: any): void {
+    console.log('Deleting product:', product);
+    this.productoService.setDelProducto(product);
+
+    this.showDeleteModal = true;
+  }
+
+  cancelDelete(): void {
+    this.showDeleteModal = false;
+    this.selectedProduct = null;
+  }
+
+  deleteProduct(productId: any): void {
+    // Handle product deletion logic here
+    console.log(`Deleting product with ID: ${productId}`);
+    this.showDeleteModal = false;
+    this.selectedProduct = null;
+  }
 }
