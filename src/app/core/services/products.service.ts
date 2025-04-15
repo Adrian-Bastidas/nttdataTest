@@ -1,7 +1,6 @@
-import { inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Product, ProductWId } from '../interfaces/product';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import apiClient from '../interceptors/axios.interceptor';
 import { ShortPopUpService } from './popup.service';
 
@@ -10,54 +9,80 @@ import { ShortPopUpService } from './popup.service';
 })
 export class ProductService {
   constructor(private popupService: ShortPopUpService) {}
+
   async loadProducts(): Promise<Product[]> {
-    try {
-      const response = await apiClient.get('bp/products');
-      return response.data?.data || [];
-    } catch (error) {
-      console.error('❌ Error al cargar productos:', error);
-      this.popupService.showError('Error al cargar productos');
-      return [];
-    }
+    return this.handleRequest<Product[]>({
+      request: () => apiClient.get('bp/products'),
+      successData: (data) => data || [],
+      errorMessage: 'Error al cargar productos',
+      fallback: [],
+    });
   }
+
   async createProducts(body: Product): Promise<Product> {
-    try {
-      const response = await apiClient.post('bp/products', body);
-      return response.data?.data || [];
-    } catch (error) {
-      console.error('❌ Error al crear producto:', error);
-      this.popupService.showError('Error al crear producto');
-      return {} as Product;
-    }
+    return this.handleRequest<Product>({
+      request: () => apiClient.post('bp/products', body),
+      onSuccess: () =>
+        this.popupService.showSuccess('Producto creado con éxito'),
+      errorMessage: 'Error al crear producto',
+      fallback: {} as Product,
+    });
   }
+
   async validateId(id: string): Promise<boolean> {
-    try {
-      const response = await apiClient.get(`bp/products/verification/${id}`);
-      return response.data || false;
-    } catch (error) {
-      console.error('❌ Error al validar productos:', error);
-      this.popupService.showError('Error al crear producto');
-      return false;
-    }
+    return this.handleRequest<boolean>({
+      request: () => apiClient.get(`bp/products/verification/${id}`),
+      successData: (data) => data ?? false,
+      errorMessage: 'Error al validar productos',
+      fallback: false,
+    });
   }
+
   async editProduct(id: string, body: ProductWId): Promise<Product> {
-    try {
-      const response = await apiClient.put(`bp/products/${id}`, body);
-      return response.data?.data || [];
-    } catch (error) {
-      console.error('❌ Error al editar productos:', error);
-      this.popupService.showError('Error al crear producto');
-      return {} as Product;
-    }
+    return this.handleRequest<Product>({
+      request: () => apiClient.put(`bp/products/${id}`, body),
+      onSuccess: () =>
+        this.popupService.showSuccess('Producto editado con éxito'),
+      errorMessage: 'Error al editar productos',
+      fallback: {} as Product,
+    });
   }
+
   async deleteProduct(id: string): Promise<string> {
+    return this.handleRequest<string>({
+      request: () => apiClient.delete(`bp/products/${id}`),
+      successData: (data) => {
+        const message = data?.message ?? 'Producto eliminado con éxito';
+        this.popupService.showSuccess(message);
+        return message;
+      },
+      errorMessage: 'Error al eliminar producto',
+      fallback: '',
+    });
+  }
+
+  private async handleRequest<T>({
+    request,
+    onSuccess,
+    successData,
+    errorMessage,
+    fallback,
+  }: {
+    request: () => Promise<any>;
+    onSuccess?: () => void;
+    successData?: (data: any) => T;
+    errorMessage: string;
+    fallback: T;
+  }): Promise<T> {
     try {
-      const response = await apiClient.delete(`bp/products/${id}`);
-      return response.data.message || [];
+      const response = await request();
+      onSuccess?.();
+      const data = response?.data?.data;
+      return successData ? successData(data) : data;
     } catch (error) {
-      console.error('❌ Error al eliminar productos:', error);
-      this.popupService.showError('Error al eliminar producto');
-      return '';
+      console.error(`❌ ${errorMessage}:`, error);
+      this.popupService.showError(errorMessage);
+      return fallback;
     }
   }
 }
@@ -69,28 +94,31 @@ export class ProductoInternalService {
   private productoParaEditar: Product | null = null;
   private productoSubject = new BehaviorSubject<Product | null>(null);
 
-  setProducto(producto: Product) {
+  setProducto(producto: Product): void {
     this.productoParaEditar = producto;
   }
 
-  getProducto() {
+  getProducto(): Product | null {
     return this.productoParaEditar;
   }
 
-  clearProducto() {
+  clearProducto(): void {
     this.productoParaEditar = null;
   }
 
-  setDelProducto(producto: Product) {
+  setDelProducto(producto: Product): void {
     this.productoSubject.next(producto);
   }
-  getDelProducto() {
+
+  getDelProducto(): Product | null {
     return this.productoSubject.value;
   }
+
   getProductoObservable() {
     return this.productoSubject.asObservable();
   }
-  clearDelProducto() {
+
+  clearDelProducto(): void {
     this.productoSubject.next(null);
   }
 }
