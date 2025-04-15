@@ -41,26 +41,18 @@
 
     <tbody>
       <tr *ngFor="let row of data | slice : 0 : selectedResults; let i = index">
-        <td *ngFor="let col of columns">
+        <td *ngFor="let col of columns" [attr.data-label]="col.label">
           <ng-container *ngIf="col.key === 'logo'; else defaultCell">
             <div class="logo-circle">
-              <ng-container *ngIf="col.key === 'logo'; else defaultCell">
-                <div class="logo-circle">
-                  <ng-container
-                    *ngIf="!imagenFallida[row.id]; else mostrarIniciales"
-                  >
-                    <img
-                      [src]="row[col.key]"
-                      class="logo-img"
-                      (error)="onImageError(row.id)"
-                    />
-                  </ng-container>
-                  <ng-template #mostrarIniciales>
-                    {{ getInitials(row["nombre"]) || "JG" }}
-                  </ng-template>
-                </div>
+              <ng-container
+                *ngIf="!imagenFallida[row.id]; else mostrarIniciales"
+              >
+                <img
+                  [src]="row[col.key]"
+                  class="logo-img"
+                  (error)="onImageError(row.id)"
+                />
               </ng-container>
-
               <ng-template #mostrarIniciales>
                 {{ getInitials(row["nombre"]) || "JG" }}
               </ng-template>
@@ -72,7 +64,7 @@
           </ng-template>
         </td>
 
-        <td class="actions-cell">
+        <td class="actions-cell" data-label="Acciones">
           <i
             class="fa fa-ellipsis-v action-icon"
             aria-hidden="true"
@@ -90,7 +82,7 @@
         </td>
       </tr>
       <tr *ngIf="data.length === 0">
-        <td [attr.colspan]="columns.length" class="no-data-row">
+        <td [attr.colspan]="columns.length + 1" class="no-data-row">
           <div class="no-data-content">
             <div class="icon">
               <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
