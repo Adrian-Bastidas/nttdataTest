@@ -77,7 +77,7 @@ export class ProductService {
     try {
       const response = await request();
       onSuccess?.();
-      const data = response?.data?.data;
+      const data = response?.data?.data ?? response?.data;
       return successData ? successData(data) : data;
     } catch (error) {
       console.error(`❌ ${errorMessage}:`, error);

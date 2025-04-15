@@ -21,6 +21,7 @@
             <input
               id="id-input"
               formControlName="id"
+              maxlength="10"
               [class.error]="f['id'].invalid && f['id'].touched"
             />
             <div
@@ -37,6 +38,7 @@
             <input
               id="name-input"
               formControlName="name"
+              maxlength="100"
               [class.error]="f['name'].invalid && f['name'].touched"
             />
             <div
@@ -53,6 +55,7 @@
             <input
               id="description-input"
               formControlName="description"
+              maxlength="200"
               [class.error]="
                 f['description'].invalid && f['description'].touched
               "

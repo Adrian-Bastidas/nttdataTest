@@ -135,6 +135,7 @@ export class CreateProductComponent implements OnInit {
               const validate = await this.productService.validateId(
                 this.formulario.get('id')?.value
               );
+
               if (!validate) {
                 const formularioValues = this.formulario.value;
                 formularioValues.date_revision =
