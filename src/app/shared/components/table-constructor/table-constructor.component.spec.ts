@@ -49,7 +49,7 @@ describe('TableConstructorComponent', () => {
     const select = fixture.debugElement.query(
       By.css('.result-selector')
     ).nativeElement;
-    select.value = '10'; // valor en cadena
+    select.value = '10';
     select.dispatchEvent(new Event('change'));
     fixture.detectChanges();
 

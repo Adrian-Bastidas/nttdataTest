@@ -28,7 +28,7 @@ describe('ProductService', () => {
     httpMock = TestBed.inject(HttpTestingController);
   });
 
-  it('should load products', async () => {
+  it('debe cargar productos', async () => {
     const mockResponse = {
       data: {
         data: [
@@ -60,7 +60,7 @@ describe('ProductService', () => {
     expect(apiClient.get).toHaveBeenCalledWith('bp/products');
   });
 
-  it('should create product', async () => {
+  it('debe crear producto', async () => {
     const product: Product = {
       id: '2',
       name: 'New Product',
@@ -81,7 +81,7 @@ describe('ProductService', () => {
     );
   });
 
-  it('should validate product ID', async () => {
+  it('debe validar la identificación del producto', async () => {
     const id = '123';
     apiClient.get = jest.fn().mockResolvedValue({ data: { data: true } });
 
@@ -92,7 +92,7 @@ describe('ProductService', () => {
     );
   });
 
-  it('should edit product', async () => {
+  it('debería editar el producto', async () => {
     const id = '1';
     const product: Product = {
       id,
@@ -114,7 +114,7 @@ describe('ProductService', () => {
     );
   });
 
-  it('should delete product', async () => {
+  it('debería eliminar el producto', async () => {
     const id = '1';
     const mockResponse = { data: { data: { message: 'Product deleted' } } };
 
@@ -142,7 +142,7 @@ describe('ProductoInternalService', () => {
     productoInternalService = TestBed.inject(ProductoInternalService);
   });
 
-  it('should set and get producto', () => {
+  it('Debería configurar y obtener el producto.', () => {
     const product: Product = {
       id: '1',
       name: 'Product 1',
@@ -157,7 +157,7 @@ describe('ProductoInternalService', () => {
     expect(result).toEqual(product);
   });
 
-  it('should clear producto', () => {
+  it('debe borrar el producto', () => {
     const product: Product = {
       id: '1',
       name: 'Product 1',
@@ -173,7 +173,7 @@ describe('ProductoInternalService', () => {
     expect(result).toBeNull();
   });
 
-  it('should set and get delProducto', () => {
+  it('Debería configurar y obtener delProducto', () => {
     const product: Product = {
       id: '1',
       name: 'Product 1',
@@ -188,7 +188,7 @@ describe('ProductoInternalService', () => {
     expect(result).toEqual(product);
   });
 
-  it('should clear delProducto', () => {
+  it('Debería borrar delProducto', () => {
     const product: Product = {
       id: '1',
       name: 'Product 1',
@@ -204,7 +204,7 @@ describe('ProductoInternalService', () => {
     expect(result).toBeNull();
   });
 
-  it('should get producto observable', (done) => {
+  it('Debería hacerse observable el producto', (done) => {
     const product: Product = {
       id: '1',
       name: 'Product 1',

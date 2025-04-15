@@ -140,7 +140,6 @@ function getErrorMessage(error: AxiosError): string {
 
   if (!data) return 'Error de conexión';
 
-  // Diferentes formatos comunes de error en APIs
   if (typeof data === 'string') return data;
   if (data.message) return data.message;
   if (data.error)
