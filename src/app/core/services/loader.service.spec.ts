@@ -7,14 +7,14 @@ describe('LoaderService', () => {
     service = new LoaderService();
   });
 
-  it('should initially emit false', (done) => {
+  it('inicialmente debería emitir false', (done) => {
     service.loading$.subscribe((value) => {
       expect(value).toBe(false);
       done();
     });
   });
 
-  it('should emit true when show() is called', (done) => {
+  it('debe emitir verdadero cuando se llama a show()', (done) => {
     const emitted: boolean[] = [];
 
     service.loading$.subscribe((value) => {
@@ -28,7 +28,7 @@ describe('LoaderService', () => {
     service.show();
   });
 
-  it('should emit false when hide() is called after show()', (done) => {
+  it('debe emitir falso cuando se llama a hide() después de show()', (done) => {
     const emitted: boolean[] = [];
 
     service.loading$.subscribe((value) => {

@@ -78,18 +78,18 @@ export class CreateProductComponent implements OnInit {
     this.formulario
       .get('date_release')
       ?.valueChanges.subscribe((valor: string) => {
-        const [anio, mes, dia] = valor.split('-').map(Number); // <-- Cambiado el orden
+        const [anio, mes, dia] = valor.split('-').map(Number);
 
         if ([anio, mes, dia].some(isNaN)) return;
 
         const fecha = new Date(anio, mes - 1, dia);
-        fecha.setFullYear(fecha.getFullYear() + 1); // Agrega 1 año
+        fecha.setFullYear(fecha.getFullYear() + 1);
 
         const diaRev = fecha.getDate().toString().padStart(2, '0');
         const mesRev = (fecha.getMonth() + 1).toString().padStart(2, '0');
         const anioRev = fecha.getFullYear();
 
-        const date_revision = `${anioRev}-${mesRev}-${diaRev}`; // Mantiene el mismo formato
+        const date_revision = `${anioRev}-${mesRev}-${diaRev}`;
 
         this.formulario
           .get('date_revision')

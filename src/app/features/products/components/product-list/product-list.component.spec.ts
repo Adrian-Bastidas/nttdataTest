@@ -45,7 +45,6 @@ describe('ProductListComponent (Jest)', () => {
   ];
 
   beforeEach(async () => {
-    // Mock de servicios
     productServiceMock = {
       loadProducts: jest.fn().mockResolvedValue(mockProducts),
     };
