@@ -2,11 +2,7 @@
   <div class="popup-container fade-in">
     <div class="icon-container">
       <i
-        class="fa"
-        [ngClass]="{
-          'fa fa-check-circle': type === 'success',
-          'fa fa-exclamation-triangle': type === 'error'
-        }"
+        class="fa fa-exclamation-triangle"
         [class.success]="type === 'success'"
         [class.error]="type === 'error'"
         aria-hidden="true"

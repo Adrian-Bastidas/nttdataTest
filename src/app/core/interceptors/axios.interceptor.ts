@@ -1,4 +1,3 @@
-// src/app/interceptors/axios-error.interceptor.ts
 import { environment } from '@envs/environment';
 import axios, { AxiosError } from 'axios';
 import { inject } from '@angular/core';
@@ -6,7 +5,6 @@ import { Router } from '@angular/router';
 import { LoaderService } from '../services/loader.service';
 import { ShortPopUpService } from '../services/popup.service';
 
-// Crear instancia de axios
 const apiClient = axios.create({
   baseURL: environment.API_BASE_URL,
   timeout: 10000,
@@ -15,16 +13,13 @@ const apiClient = axios.create({
   },
 });
 
-// Exportar directamente para ser utilizado en la aplicación
 export default apiClient;
 
-// Función para inicializar los interceptores de Axios
 export function setupAxiosInterceptors() {
   const loaderService = new LoaderService();
   const router = inject(Router);
   const popupService = inject(ShortPopUpService);
 
-  // Interceptor de solicitud (sin cambios respecto al original)
   apiClient.interceptors.request.use(
     (config) => {
       loaderService.show();
@@ -43,7 +38,6 @@ export function setupAxiosInterceptors() {
     }
   );
 
-  // Interceptor de respuesta
   apiClient.interceptors.response.use(
     (response) => {
       console.log('✅ Respuesta recibida:', response.status, response.data);
@@ -58,10 +52,7 @@ export function setupAxiosInterceptors() {
         const status = error.response?.status;
         const errorData = error.response?.data as any;
 
-        // Obtener mensaje de error desde la API o usar un mensaje genérico
         const errorMessage = getErrorMessage(error);
-
-        // 💥 Manejo de error de CORS (cuando no hay respuesta del servidor)
         if (!error.response && error.code === 'ERR_NETWORK') {
           console.error('🌐 Posible error de CORS o red');
           popupService.showError(
@@ -127,7 +118,6 @@ export function setupAxiosInterceptors() {
             }
         }
 
-        // Registrar el error en la consola para depuración
         console.error('❌ Error detallado:', {
           status,
           url: error.config?.url,
@@ -136,7 +126,6 @@ export function setupAxiosInterceptors() {
           data: error.response?.data,
         });
       } else {
-        // Para errores que no son de Axios
         console.error('❌ Error no Axios:', error);
         popupService.showError('Error al procesar la solicitud.');
       }
@@ -146,7 +135,6 @@ export function setupAxiosInterceptors() {
   );
 }
 
-// Extraer mensaje de error de diferentes formatos de respuesta de API
 function getErrorMessage(error: AxiosError): string {
   const data = error.response?.data as any;
 
@@ -164,11 +152,9 @@ function getErrorMessage(error: AxiosError): string {
   return 'Error en la solicitud';
 }
 
-// Formatear errores de validación (formato común en APIs REST)
 function formatValidationErrors(errorData: any): string {
   if (!errorData) return '';
 
-  // Formato Laravel/Symfony
   if (errorData.errors && typeof errorData.errors === 'object') {
     const errorMessages: string[] = [];
     for (const field in errorData.errors) {
@@ -179,7 +165,6 @@ function formatValidationErrors(errorData: any): string {
     return errorMessages.join('\n');
   }
 
-  // Otros formatos comunes
   if (errorData.details && Array.isArray(errorData.details)) {
     return errorData.details.map((item: any) => item.message).join('\n');
   }

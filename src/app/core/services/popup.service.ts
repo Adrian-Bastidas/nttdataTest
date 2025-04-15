@@ -40,7 +40,7 @@ export class ShortPopUpService {
   }
 
   // Método para mostrar mensajes de éxito
-  showSuccess(message: string, showAcceptButton = false): void {
+  showSuccess(message: string, showAcceptButton = true): void {
     this.popupState.set({
       show: true,
       type: 'success',
